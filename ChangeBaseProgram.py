@@ -1,63 +1,132 @@
 # Filename: ChangeBaseProgram.py
 # Author: Mike Shea
-# Date: 8/14/20
+# Date: 8/15/20
 #
 # Description: A program that prompts the user to enter a value to convert
 # as well as the current number base and the desired number base.
 
-# User Inputs #
-valueString = input("Enter the value to convert: ")
-initialBase = input("Enter the current base of the number: ")
-newBase = input("Enter the base you would like to convert to: ")
-
-# Validate Inputs
-while(int(valueString) <= 0 or int(initialBase) <= 0 or int(newBase) <= 0):
-    print("Invalid input. Please enter positive values for the value and bases.")
-    valueString = input("Enter the value to convert: ")
-    initialBase = input("Enter the current base of the number: ")
-    newBase = input("Enter the base you would like to convert to: ")
+class ChangeBase:
     
-# Initialize Variables #
-value = int(valueString)
-valueLength = len(valueString)
-newValue = int(0)
-totalSum = int(0)
+    def __init__(self):
+        self.value = 0
+        self.initialBase = 0
+        self.newBase = 0
+        self.solution = 0
+        self.debug = False
 
-# Convert to base 10 #
-if(initialBase != 10):
-
-    counter = valueLength - 1
+    def userInput(self):
+        self.value = self.inputValue()
+        self.initialBase = self.inputInitialBase()
+        self.newBase = self.inputNewBase()
     
-    for i in range(valueLength):
-        currentValue = int(valueString[i])
-        currentProduct = currentValue * (int(initialBase) ** counter)
-        totalSum += currentProduct
-        --counter
+    def inputValue(self):
+        value = input("Enter the value to convert: ")
+        while(int(value) <= 0):
+            print("Invalid input. Please enter a positive value.")
+            value = input("Enter the value to convert: ")
+        return value
+
+    def inputInitialBase(self):
+        initialBase =  input("Enter the current number base: ")
+        while(int(initialBase) <= 0):
+            print("Invalid input. Please enter a positive value.")
+            initialBase =  input("Enter the current number base: ")
+        return initialBase
+
+
+    def inputNewBase(self):
+        newBase =  input("Enter the new number base: ")
+        while(int(newBase) <= 0):
+            print("Invalid input. Please enter a positive value.")
+            newBase =  input("Enter the new number base: ")
+        return newBase
+
+    def convertToBase10(self):
+        # Convert to base 10 #
+        if(self.initialBase != 10):
+
+            valueLength = len(self.value)
+            counter = valueLength - 1
+            valueString = str(self.value)
+            totalSum = int(0)
+
+            for i in range(valueLength):
+                currentValue = int(valueString[i])
+                currentProduct = currentValue * (int(self.initialBase) ** counter)
+
+                if(self.debug == True):
+                    print(str(currentProduct) + " = " + str(currentValue) + " * " + str(self.initialBase) + " ^ " + str(counter))
+                
+                totalSum += currentProduct
+                counter -= 1
+
+        if(self.debug == True):  
+            print("totalSum = " + str(totalSum))
+            print()
+            
+        return totalSum
+
+
+    def calculateNewValue(self):
+        value = self.value
+        initialBase = self.initialBase
+        newBase = self.initialBase
+
+        valueString = str(value)
+        valueLength = len(value)
+        newValue = int(0)
+        totalSum = int(0)
+        totalSum = self.convertToBase10()
+
+        if(self.newBase == 10):
+            self.solution = totalSum
+        else:
+            self.convertToNewBase(totalSum)
+
+    
         
-# Convert to new base
-solutionList = []
-remainder = float(0)
-quotient = float(totalSum)
-finishedDividing = False
+    def convertToNewBase(self, totalSum):
+        # Convert to new base
+        solutionList = []
+        remainder = float(0)
+        quotient = float(totalSum)
+        finishedDividing = False
 
-while(finishedDividing == False):
-    remainder = quotient % int(newBase)
-    quotient = quotient // int(newBase)
-    solutionList.append(int(remainder))
+        while(finishedDividing == False):
 
-    if(quotient == 0):
-        finishedDividing = True
+            
+            remainder = quotient % int(self.newBase)
 
-# New value is the quotients in reverse order
-solutionList.reverse()
-solution = ""
-for i in solutionList:
-    solution += str(i)
+            if(self.debug == True):
+                print("quotient = " + str(quotient))
+                print("remainder = " + str(remainder))
+                print()
+                
+            quotient = quotient // int(self.newBase)
+            solutionList.append(int(remainder))
 
-# Output
-print("=======================")
-print("Entered value: " + str(value))
-print("Initial base: " + initialBase)
-print("New Value: " + solution)
-print("New base: " + str(newBase))
-print("=======================")
+            if(quotient == 0):
+                finishedDividing = True
+
+        # New value is the quotients in reverse order
+        solutionList.reverse()
+        solution = ""
+        for i in solutionList:
+            solution += str(i)
+
+        self.solution = solution
+
+    def output(self):
+        print()
+        print("=======================")
+        print("Entered value: " + str(self.value))
+        print("Initial base: " + str(self.initialBase))
+        print("New Value: " + str(self.solution))
+        print("New base: " + str(self.newBase))
+        print("=======================")
+
+# Main #
+changeBase = ChangeBase()
+changeBase.userInput()
+changeBase.calculateNewValue()
+changeBase.output()
