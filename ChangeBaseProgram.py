@@ -8,12 +8,16 @@
 class ChangeBase:
     
     def __init__(self):
+        self.debug = True
         self.value = 0
         self.initialBase = 0
         self.newBase = 0
         self.solution = 0
-        self.debug = False
-
+        self.charList = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+                    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+                    'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'
+                    'U', 'V', 'W', 'X', 'Y', 'Z']
+        
     def userInput(self):
         self.value = self.inputValue()
         self.initialBase = self.inputInitialBase()
@@ -42,9 +46,8 @@ class ChangeBase:
         return newBase
 
     def convertToBase10(self):
-        # Convert to base 10 #
+        
         if(self.initialBase != 10):
-
             valueLength = len(self.value)
             counter = valueLength - 1
             valueString = str(self.value)
@@ -70,7 +73,6 @@ class ChangeBase:
     def calculateNewValue(self):
         value = self.value
         initialBase = self.initialBase
-        newBase = self.initialBase
 
         valueString = str(value)
         valueLength = len(value)
@@ -78,14 +80,15 @@ class ChangeBase:
         totalSum = int(0)
         totalSum = self.convertToBase10()
 
-        if(self.newBase == 10):
+        if (int(self.newBase) == 10):
             self.solution = totalSum
         else:
-            self.convertToNewBase(totalSum)
+            self.solution = self.convertToNewBase(totalSum)
 
     
         
     def convertToNewBase(self, totalSum):
+        
         # Convert to new base
         solutionList = []
         remainder = float(0)
@@ -108,13 +111,53 @@ class ChangeBase:
             if(quotient == 0):
                 finishedDividing = True
 
-        # New value is the quotients in reverse order
+        # New value is the remainders in reverse order
         solutionList.reverse()
-        solution = ""
+        tempSolution = ""
         for i in solutionList:
-            solution += str(i)
+            tempSolution += str(i)
+
+        solution = ""
+
+        print("solution: ")
+        for i in range(len(tempSolution)):
+            if(i < len(tempSolution) - 1):
+
+                thisValue = ""
+               
+                numberPair = str(tempSolution[i]) + str(tempSolution[i+1])
+
+                if(numberPair >= self.newBase):
+                   firstChar = tempSolution[i]
+                   secondChar = tempSolution[i+1]
+                   newChar = ''
+
+                   # index to check
+                   thisValue = str(firstChar) + str(secondChar)
+                   thisValue = int(thisValue)
+
+                if thisValue <= 36:
+                    newChar = self.convertToChar(index)
+
+                    if(self.debug):
+                        print(str(firstChar) + str(secondChar) + " converted to " + str(newChar))
+
+                    solution += str(newChar)
+                else:
+                    solution += str(tempSolution[i])                    
 
         self.solution = solution
+
+    def convertToChar(self, index):
+        
+        return self.charList[index]
+
+
+    def getIndex(self, char):
+
+        for x in range(self.charList):
+            if x == char:
+                return x
 
     def output(self):
         print()
